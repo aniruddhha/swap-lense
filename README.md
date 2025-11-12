@@ -1,6 +1,6 @@
 # 🪄 Swap Lense: Live Face Swapping for Apple Silicon (M1/M2/M3)
 
-Swap Lense is a minimal live **face-swapping** app built with **InsightFace** + **OpenCV**, optimized for **Apple Silicon** using **ONNX Runtime (Core ML Execution Provider)**. It runs locally on your Mac (no cloud), aims for privacy-first calls, and can publish the video via a **Virtual Camera** for Meet/Teams/Zoom/WhatsApp.
+Swap Lense is a minimal live **face-swapping** app built with **InsightFace** + **OpenCV**, optimized for **Apple Silicon** using **ONNX Runtime (Core ML Execution Provider)**. It runs locally on your Mac (no cloud), aims for privacy-first calls, and can publish the video via a **Virtual Camera** for Meet/Teams/Zoom.
 
 ---
 
@@ -27,11 +27,9 @@ This software is for **educational and ethical** use only. Do **not** use it for
 git clone https://github.com/aniruddhha/swap-lense.git
 cd swap-lense
 
-# Recommended: use Python 3.12 on Apple Silicon
-/opt/homebrew/bin/brew install python@3.12  # if needed
-/opt/homebrew/opt/python@3.12/bin/python3.12 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
-python --version  # should show 3.12.x
+python --version  
 ```
 
 ### 2) Install Requirements
@@ -77,7 +75,7 @@ The app shows a live preview window and (optionally) publishes to a Virtual Came
 
 ---
 
-## 🎥 Virtual Camera (to use in Meet/Teams/Zoom/WhatsApp)
+## 🎥 Virtual Camera (to use in Meet/Teams/Zoom)
 
 ### Option A — OBS Virtual Camera (recommended and most compatible)
 1. **Install OBS from the official .dmg (Apple Silicon build).**
@@ -86,7 +84,7 @@ The app shows a live preview window and (optionally) publishes to a Virtual Came
 3. Open **OBS** and click **Start Virtual Camera** (canvas may stay black; that’s normal).
 4. Run this app; console prints: `Virtual camera started: OBS Virtual Camera`.
 5. Open **QuickTime → New Movie Recording → ⌄ → Camera: OBS Virtual Camera** — you should see the swap feed.
-6. In **Meet/Teams/Zoom/WhatsApp**, go to **Settings → Video/Camera → select “OBS Virtual Camera.”**
+6. In **Meet/Teams/Zoom**, go to **Settings → Video/Camera → select “OBS Virtual Camera.”**
 
 > If OBS Virtual Camera is missing after dmg install, manually copy the plugin from inside the app bundle:
 > - From: `/Applications/OBS.app/Contents/Resources/obs-mac-virtualcam.plugin`
@@ -94,7 +92,7 @@ The app shows a live preview window and (optionally) publishes to a Virtual Came
 > Then log out/in and start OBS Virtual Camera.
 
 ### macOS Permissions & Gotchas
-- System Settings → **Privacy & Security → Camera**: allow **OBS**, your **browser**, **Teams**, **WhatsApp**.
+- System Settings → **Privacy & Security → Camera**: allow **OBS**, your **browser**, **Teams**.
 - Only **one app** can hold the **physical** camera. Close FaceTime/Photo Booth/Zoom if they’re open.
 - In Chrome, try toggling **Hardware Acceleration** if you see black (then relaunch).
 
