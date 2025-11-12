@@ -129,8 +129,8 @@ The app shows a live preview window and (optionally) publishes to a Virtual Came
 - **SCRFD + inswapper_128** with simple face parsing mask (built-in)
 - 5 avatars in a bottom carousel (hotkeys **1–5**)
 - **Reset** button (**0**) to show your real face
-- Optional **virtual camera** publishing
-- Optional **MP4 recording** with correct FPS pacing
+- **virtual camera** publishing
+- **Hot Keys** 1-5 avatars; h show/hide overlays; ESC/q Exit
 
 ---
 
