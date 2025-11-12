@@ -1,129 +1,160 @@
-I cannot directly create or upload files (like a downloadable `.md` file) to your computer.
+# 🪄 Swap Lense: Live Face Swapping for Apple Silicon (M1/M2/M3)
 
-However, I can provide the complete `README.md` content in a single **markdown code block**. You can easily copy this text and save it as a file named `README.md` on your computer for uploading to GitHub.
-
-Here is the complete content based on your specifications and our troubleshooting:
-
-````markdown
-# 🪄 Swap Lense: Live Face Swapping for Apple Silicon (M1/M2)
-
-Swap Lense is a minimal implementation of a live video face-swapping application built using **InsightFace** and **OpenCV**. It is designed to run efficiently on macOS devices with Apple Silicon chips (M1/M2/M3) by leveraging the **CoreML Execution Provider (EP)** for accelerated inference.
-
-## ⚠️ Disclaimer and Ethical Use
-
-This project is intended solely for **educational, experimental, and ethical use**.
-
-The maintainer and contributors of this repository are **not responsible** for any misuse, illegal, or unethical applications of this software, including but not limited to, impersonation, harassment, or creation of deceptive content. Users are solely responsible for adhering to all local laws and ethical guidelines. **Do not use this software for criminal or malicious activities.**
-
-## 🚧 Development Status
-
-This project is currently under **heavy development** and is **not considered production-ready**. Functionality is limited to a simple single-face swap.
-
-## 💻 System Compatibility
-
-| System | Compatibility Status | Notes |
-| :--- | :--- | :--- |
-| **macOS (Apple Silicon M1/M2/M3)** | **Supported** | Optimized to use the **CoreML Execution Provider (EP)**. |
-| **macOS (Intel)** | Untested | Will likely fall back to the slower CPU EP. |
-| **Windows, Linux** | Unsupported | Planned for future development. |
+Swap Lense is a minimal live **face-swapping** app built with **InsightFace** + **OpenCV**, optimized for **Apple Silicon** using **ONNX Runtime (Core ML Execution Provider)**. It runs locally on your Mac (no cloud), aims for privacy-first calls, and can publish the video via a **Virtual Camera** for Meet/Teams/Zoom/WhatsApp.
 
 ---
 
-## 🚀 Getting Started
+## ⚠️ Disclaimer & Ethical Use
 
-### Prerequisites
+This software is for **educational and ethical** use only. Do **not** use it for impersonation, harassment, or deceptive content. You are solely responsible for following laws, platform policies, and consent requirements. Prefer **AI‑generated avatars** over real-person likenesses (especially celebrities).
 
-1.  **Python 3.8+**
-2.  **Xcode Command Line Tools** (Required for some dependencies on macOS).
-3.  **OBS Studio** (Required as a reliable virtual camera intermediary for most applications like WhatsApp, Zoom, and Teams).
+---
 
-### Step 1: Clone the Repository & Setup Environment
+## ✅ Compatibility
 
+| System | Status | Notes |
+|---|---|---|
+| macOS (Apple Silicon M1/M2/M3) | **Supported** | Uses **Core ML EP** when available; falls back to CPU EP. |
+| macOS (Intel) | Untested | Likely CPU-only; performance may be limited. |
+| Windows / Linux | Not yet | Planned later. |
+
+---
+
+## 🚀 Quick Start
+
+### 1) Clone & Virtual Environment
 ```bash
-# Clone the repository
-git clone [https://github.com/aniruddhha/swap-lense.git](https://github.com/aniruddhha/swap-lense.git)
+git clone https://github.com/aniruddhha/swap-lense.git
 cd swap-lense
 
-# Create and activate a virtual environment (Recommended)
-python3 -m venv venv
-source venv/bin/activate
+# Recommended: use Python 3.12 on Apple Silicon
+/opt/homebrew/bin/brew install python@3.12  # if needed
+/opt/homebrew/opt/python@3.12/bin/python3.12 -m venv .venv
+source .venv/bin/activate
+python --version  # should show 3.12.x
+```
 
-# Install required packages
-# NOTE: Ensure you install ONNXRuntime with CoreML support if possible.
+### 2) Install Requirements
+```bash
+pip install --upgrade pip wheel setuptools
 pip install -r requirements.txt
-````
+```
+> If you hit `onnxruntime-coreml` issues, stick to **onnxruntime==1.23.2** and **skip** the coreml extra; Core ML EP is bundled in main `onnxruntime` for arm64 wheels on recent versions. Performance will still be solid.
 
-### Step 2: Download Models
+### 3) Model Files
+Create a `models/` folder and place:
+- `inswapper_128.onnx` (face swapper)
+- *Detector/landmarks* come from InsightFace `buffalo_l` pack automatically (downloaded on first run).
 
-The application requires the InsightFace models.
+```
+swap-lense/
+├── main.py
+├── requirements.txt
+├── models/
+│   └── inswapper_128.onnx
+└── avatars/
+    ├── 1.jpg
+    ├── 2.jpg
+    ├── 3.jpg
+    ├── 4.jpg
+    └── 5.jpg
+```
 
-1.  Create a folder named `models` in the root directory.
-2.  Download the **face detector** and **swapper** models:
-      * `buffalo_l` (for SCRFD detector and ArcFace landmarks)
-      * `inswapper_128.onnx`
-3.  Place these files into the newly created `models` folder.
+### 4) Avatars
+Add 5 images into `avatars/` as `1.jpg … 5.jpg`. Prefer **front-facing, evenly lit** images. For safety, use **AI-generated** faces.
 
-### Step 3: Add Avatars
+---
 
-1.  Create a folder named `avatars` in the root directory.
-2.  Add your desired source images and name them sequentially (e.g., `1.jpg`, `2.jpg`, `3.jpg`, etc.). The provided `main.py` code expects files named `1.jpg` through `5.jpg`.
-
------
-
-## 🎥 Usage Guide: Running the Swap Lense
-
-### 1\. Launch the Application (CRITICAL STEP)
-
-The correct launch order is **essential** to prevent a black screen issue.
-
-Run the main Python script **first** from your terminal:
-
+## ▶️ Run
 ```bash
 python main.py
 ```
+- **1–5**: pick avatar
+- **0**: reset (show your real face)
+- **q**: quit
 
-  * A live preview window will open (this is the OpenCV window).
-  * Use keys **1-5** to select an avatar, and **0** to reset (show your real face).
-  * The script initializes the virtual camera device. The device name it creates may appear as **"OBS Virtual Camera"** or an empty/generic name in the OBS dropdown.
+The app shows a live preview window and (optionally) publishes to a Virtual Camera if available.
 
-### 2\. Configure OBS Studio (Essential Intermediary)
+---
 
-OBS is used to create a stable, compatible virtual camera output for communication apps.
+## 🎥 Virtual Camera (to use in Meet/Teams/Zoom/WhatsApp)
 
-1.  **Start the Python script (Step 1).**
-2.  Open **OBS Studio**.
-3.  In the **Sources** dock, click **+** and select **Video Capture Device**.
-4.  In the properties window, set the **Device** dropdown.
-      * **Crucial Note:** You must select the device that corresponds to the running Python script (e.g., the device named **"OBS Virtual Camera"** or the empty/generic option that corresponds to the `pyvirtualcam` output).
-      * **If successful, your live face-swapped video will immediately appear in the OBS Preview area.**
-5.  In the **Controls** dock, click **Start Virtual Camera**.
+### Option A — OBS Virtual Camera (recommended and most compatible)
+1. **Install OBS from the official .dmg (Apple Silicon build).**
+2. Ensure the plugin exists (after install or manual copy):
+   - `/Library/CoreMediaIO/Plug-Ins/DAL/obs-mac-virtualcam.plugin`
+3. Open **OBS** and click **Start Virtual Camera** (canvas may stay black; that’s normal).
+4. Run this app; console prints: `Virtual camera started: OBS Virtual Camera`.
+5. Open **QuickTime → New Movie Recording → ⌄ → Camera: OBS Virtual Camera** — you should see the swap feed.
+6. In **Meet/Teams/Zoom/WhatsApp**, go to **Settings → Video/Camera → select “OBS Virtual Camera.”**
 
------
+> If OBS Virtual Camera is missing after dmg install, manually copy the plugin from inside the app bundle:
+> - From: `/Applications/OBS.app/Contents/Resources/obs-mac-virtualcam.plugin`
+> - To: `/Library/CoreMediaIO/Plug-Ins/DAL/`
+> Then log out/in and start OBS Virtual Camera.
 
-## 📞 How to Use in Video Conferencing (Meet/Zoom/Teams/WhatsApp)
+### macOS Permissions & Gotchas
+- System Settings → **Privacy & Security → Camera**: allow **OBS**, your **browser**, **Teams**, **WhatsApp**.
+- Only **one app** can hold the **physical** camera. Close FaceTime/Photo Booth/Zoom if they’re open.
+- In Chrome, try toggling **Hardware Acceleration** if you see black (then relaunch).
 
-The key to success is using the **"OBS Virtual Camera"** as the final camera source in your communication application.
+---
 
-### General Steps
+## 🧰 Troubleshooting
 
-1.  **Verify the Python script is running** (Swapped video is visible in the OpenCV window).
-2.  **Verify OBS Virtual Camera is running** (Swapped video is visible in the OBS Preview, and the Virtual Camera is **Started**).
-3.  In your communication application, go to **Settings** \> **Video/Camera**.
-4.  Select **"OBS Virtual Camera"** as your primary camera.
+**Black screen in apps but preview works**
+- Ensure OBS Virtual Camera is **Started**.
+- Verify QuickTime sees **OBS Virtual Camera**.
+- Close and reopen the conferencing app **after** starting OBS VC.
+- Make sure our app is not minimized or blocked by permissions.
 
-### ⚠️ Troubleshooting (Black Screen)
+**OBS Virtual Camera not installed**
+- Copy the plugin:
+  ```bash
+  sudo mkdir -p /Library/CoreMediaIO/Plug-Ins/DAL
+  sudo cp -R "/Applications/OBS.app/Contents/Resources/obs-mac-virtualcam.plugin" \
+             /Library/CoreMediaIO/Plug-Ins/DAL/
+  # log out/in (or reboot) after copying
+  ```
 
-If you see a black screen in the conferencing app, follow the **Mandatory Restart Sequence**:
+**Shape mismatch error (pyvirtualcam)**
+- We force-resize to **1280×720** before sending; if you change `FRAME_W/H`, keep them consistent.
 
-1.  **Quit** the video conferencing app (WhatsApp/Zoom/Meet).
-2.  **Quit** OBS Studio.
-3.  **Quit** the Python script (by pressing `q` in the OpenCV window).
-4.  **RESTART** the applications in this exact order: **Python Script** $\rightarrow$ **OBS Studio** (check preview, **Start Virtual Camera**) $\rightarrow$ **Video Conferencing App**.
-5.  If using **WhatsApp Desktop**, double-check that both **OBS Studio** and **WhatsApp** have **Screen Recording** permissions enabled in macOS **System Settings** \> **Privacy & Security**.
+**Video looks fast-forward**
+- Use the updated script that records **after warm-up** and sets the MP4 FPS to the **measured** FPS.
 
-<!-- end list -->
+---
 
-```
+## 🧪 Feature Scope (MVP)
 
-You can copy the code block above and paste it into a new file named `README.md`.
-```
+- Single-face focus (largest face box)
+- **SCRFD + inswapper_128** with simple face parsing mask (built-in)
+- 5 avatars in a bottom carousel (hotkeys **1–5**)
+- **Reset** button (**0**) to show your real face
+- Optional **virtual camera** publishing
+- Optional **MP4 recording** with correct FPS pacing
+
+---
+
+## 🔐 Privacy Notes
+
+- All processing is **local** on your Mac.
+- No images or video leave your device.
+- Prefer **AI-generated avatars** to avoid likeness rights issues.
+- If you demo with celebrity images, state clearly it’s for **testing only** (and remove them).
+
+---
+
+## 📄 License
+
+MIT (or your preferred permissive license). Use responsibly.
+
+---
+
+## 💬 Credits
+
+- [InsightFace](https://github.com/deepinsight/insightface)
+- [OpenCV](https://opencv.org/)
+- [ONNX Runtime](https://onnxruntime.ai/)
+- [OBS Studio](https://obsproject.com/)
+
